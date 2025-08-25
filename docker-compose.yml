@@ -1,0 +1,83 @@
+version: '3.9'
+
+services:
+    mongo:
+        image: mongo:7
+        container_name: mongo
+        restart: unless-stopped
+        ports:
+            - '${MONGO_PORT}:27017'
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+            MONGO_INITDB_DATABASE: ${MONGO_DB}
+        volumes:
+            - mongo-data:/data/db
+
+    back:
+        image: node:20-alpine
+        container_name: back
+        working_dir: /app
+        depends_on: [mongo]
+        ports:
+            - '${BACK_PORT}:3000'
+        environment:
+            NODE_ENV: development
+            PORT: '3000'
+            NEXT_TELEMETRY_DISABLED: '1'
+            MONGODB_URI: 'mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/${MONGO_DB}?authSource=admin'
+            CHOKIDAR_USEPOLLING: 'true'
+            WATCHPACK_POLLING: 'true'
+        volumes:
+            - ./back:/app
+            - back-node-modules:/app/node_modules
+            - back-next:/app/.next
+        command: >
+            sh -c "
+              apk add --no-cache libc6-compat &&
+              (npm ci || npm install) &&
+              npm run dev -- -p 3000 -H 0.0.0.0
+            "
+
+    front:
+        image: node:20-alpine
+        container_name: front
+        working_dir: /app
+        depends_on: [back]
+        ports:
+            - '${FRONT_PORT}:3000'
+        environment:
+            NODE_ENV: development
+            PORT: '3000'
+            NEXT_TELEMETRY_DISABLED: '1'
+
+            NEXT_PUBLIC_BACKEND_URL: 'http://localhost:${BACK_PORT}'
+            CHOKIDAR_USEPOLLING: 'true'
+            WATCHPACK_POLLING: 'true'
+        volumes:
+            - ./front:/app
+            - front-node-modules:/app/node_modules
+            - front-next:/app/.next
+        command: >
+            sh -c "
+              apk add --no-cache libc6-compat &&
+              (npm ci || npm install) &&
+              npm run dev -- -p 3000 -H 0.0.0.0
+            "
+
+    mongo-express:
+        image: mongo-express:1
+        depends_on: [mongo]
+        ports:
+            - '8081:8081'
+        environment:
+            ME_CONFIG_MONGODB_URL: 'mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/?authSource=admin'
+            ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USERNAME}
+            ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
+
+volumes:
+    mongo-data:
+    front-node-modules:
+    back-node-modules:
+    front-next:
+    back-next:
