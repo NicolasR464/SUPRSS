@@ -23,9 +23,9 @@ reinstall-front:
 	docker compose exec front sh -lc "npm ci || npm install"
 
 #####
-# Use it like so:
+# Use it like so (for development purpose):
 # make install-back
 # make install-front
-# make add-back PKGS="package names"
-# make add-front PKGS="package names"
+# make add-back PKGS="package_names"
+# make add-front PKGS="package_names"
 #####
