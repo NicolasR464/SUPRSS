@@ -14,9 +14,13 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
     console.log('✅ user connected')
 
-    socket.on('message', (msg) => {
-        console.log('📩', msg)
-        io.emit('message', msg) // broadcast to all clients
+    // Send message to a room
+    socket.on('message', ({ room, text, timeStamp }) => {
+        if (!room || !text) return
+
+        console.log(`📩 [${room}] ${text}`)
+
+        io.to(room).emit('message', { room, text, timeStamp })
     })
 
     socket.on('disconnect', () => {
