@@ -46,13 +46,15 @@ services:
         depends_on: [back]
         ports:
             - '${FRONT_PORT}:3000'
+            - '${SOCKET_PORT}:3001'
         environment:
+            CHOKIDAR_USEPOLLING: 'true'
+            NEXT_PUBLIC_URL_BACKEND: 'http://localhost:${BACK_PORT}'
+            NEXT_PUBLIC_URL_FRONT: 'http://localhost:${FRONT_PORT}'
+            NEXT_PUBLIC_URL_SOCKET: 'http://localhost:${SOCKET_PORT}'
+            NEXT_TELEMETRY_DISABLED: '1'
             NODE_ENV: development
             PORT: '3000'
-            NEXT_TELEMETRY_DISABLED: '1'
-
-            NEXT_PUBLIC_BACKEND_URL: 'http://localhost:${BACK_PORT}'
-            CHOKIDAR_USEPOLLING: 'true'
             WATCHPACK_POLLING: 'true'
         volumes:
             - ./front:/app
@@ -69,7 +71,7 @@ services:
         image: mongo-express:1
         depends_on: [mongo]
         ports:
-            - '8081:8081'
+            - '${MONGO_EXPRESS_PORT}:8081'
         environment:
             ME_CONFIG_MONGODB_URL: 'mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/?authSource=admin'
             ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USERNAME}

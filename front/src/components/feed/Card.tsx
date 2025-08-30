@@ -1,34 +1,34 @@
 import { FeedItem } from '@/types/feed'
 import Link from 'next/link'
 
-export const Card = ({ item }: { item: FeedItem }) => {
-    console.log(item)
+export const Card = ({ feed }: { feed: FeedItem }) => {
+    console.log(feed)
 
     return (
         <li className="rounded-xl p-4 shadow border">
-            {item?.imageUrl && (
+            {feed?.imageUrl && (
                 <img
                     className="rounded-xl p-2"
-                    src={item.imageUrl}
+                    src={feed.imageUrl}
                     alt="image"
                 />
             )}
 
             <div>
                 <Link
-                    href={item.link ?? '#'}
+                    href={feed.link ?? '#'}
                     target="_blank"
                     className="font-medium hover:underline"
                 >
-                    {item.title}
+                    {feed.title}
                 </Link>
                 <div className="text-sm opacity-70">
-                    {item.pubDate
-                        ? new Date(item.pubDate).toLocaleString()
+                    {feed.pubDate
+                        ? new Date(feed.pubDate).toLocaleString()
                         : ''}
                 </div>
-                {item.contentSnippet && (
-                    <p className="text-sm mt-2">{item.contentSnippet}</p>
+                {feed.contentSnippet && (
+                    <p className="text-sm mt-2">{feed.contentSnippet}</p>
                 )}
             </div>
         </li>

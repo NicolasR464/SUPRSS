@@ -1,50 +1,74 @@
-export interface MediaDescription {
-    _?: string
-    $?: {
-        type?: string
-    }
-}
+import z from 'zod'
 
-export interface MediaCredit {
-    _?: string
-    $?: {
-        scheme?: string
-    }
-}
+export const MediaDescription = z.object({
+    _: z.string().optional(),
+    $: z
+        .object({
+            type: z.string().optional(),
+        })
+        .optional(),
+})
+export type MediaDescription = z.infer<typeof MediaDescription>
 
-export interface MediaItem {
-    $?: {
-        width?: string
-        height?: string
-        url?: string
-    }
-    'media:description'?: MediaDescription[]
-    'media:credit'?: MediaCredit[]
-}
+export const MediaCredit = z.object({
+    _: z.string().optional(),
+    $: z
+        .object({
+            scheme: z.string().optional(),
+        })
+        .optional(),
+})
+export type MediaCredit = z.infer<typeof MediaCredit>
 
-export interface FeedItem {
-    title?: string
-    link?: string
-    pubDate?: string
-    imageUrl?: string
-    content?: string
-    contentSnippet?: string
-    guid?: string
-    isoDate?: string
-}
+export const MediaItem = z.object({
+    $: z
+        .object({
+            width: z.string().optional(),
+            height: z.string().optional(),
+            url: z.string().optional(),
+        })
+        .optional(),
+    'media:description': z.array(MediaDescription).optional(),
+    'media:credit': z.array(MediaCredit).optional(),
+})
+export type MediaItem = z.infer<typeof MediaItem>
 
-export interface PaginationLinks {
-    self?: string
-}
+export const FeedItem = z.object({
+    title: z.string().optional(),
+    link: z.string().optional(),
+    pubDate: z.string().optional(),
+    imageUrl: z.string().optional(),
+    content: z.string().optional(),
+    contentSnippet: z.string().optional(),
+    guid: z.string().optional(),
+    isoDate: z.string().optional(),
+})
+export type FeedItem = z.infer<typeof FeedItem>
 
-export interface RssFeed {
-    items?: FeedItem[]
-    feedUrl?: string
-    paginationLinks?: PaginationLinks
-    title?: string
-    description?: string
-    pubDate?: string
-    link?: string
-    language?: string
-    copyright?: string
-}
+export const PaginationLinks = z.object({
+    self: z.string().optional(),
+})
+export type PaginationLinks = z.infer<typeof PaginationLinks>
+
+/** RSS Feeds data parsed by the RSS parser */
+export const RssFeed = z.object({
+    items: z.array(FeedItem).optional(),
+    feedUrl: z.string().optional(),
+    paginationLinks: PaginationLinks.optional(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    pubDate: z.string().optional(),
+    link: z.string().optional(),
+    language: z.string().optional(),
+    copyright: z.string().optional(),
+})
+export type RssFeed = z.infer<typeof RssFeed>
+
+/** Feed schema stored in the database */
+const FeedSchema = FeedItem.extend({
+    rooms: z.string().array(),
+    /** User who imported the feed */
+    user: z.string(),
+})
+
+export type FeedSchema = z.infer<typeof FeedSchema>
