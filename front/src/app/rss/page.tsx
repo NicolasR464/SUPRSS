@@ -1,4 +1,4 @@
-import { Card } from '@/components/article/Card'
+import { Card } from '@/components/feed/Card'
 import { fetchRss } from '@/utils/rss'
 
 const FEED_URL = 'https://www.lemonde.fr/rss/une.xml'
