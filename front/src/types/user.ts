@@ -1,0 +1,69 @@
+import z from 'zod'
+import { FeedSchema } from './feed'
+
+export const ReadStatus = z.enum(['READ', 'NOT_READ'])
+export type ReadStatus = z.infer<typeof ReadStatus>
+
+export const NotificationType = z.enum([
+    'COLLECTION_INVITE',
+    'STATUS_REQUEST_A', // admin rights
+    'STATUS_REQUEST_RC', // read comment rights
+    'STATUS_REQUEST_RCU', // read comment update rights
+    'STATUS_REQUEST_RO', // read only rights
+])
+export type NotificationType = z.infer<typeof NotificationType>
+
+export const NotificationStatus = z.enum(['ACCEPTED', 'DECLINED', 'PENDING'])
+export type NotificationStatus = z.infer<typeof NotificationStatus>
+
+/** Rights infered to a user for the whole collection */
+export const CollectionSubscriptionRight = z.enum([
+    'ADMIN',
+    'READ_COMMENT',
+    'READ_COMMENT_UPDATE',
+    'READ_ONLY',
+])
+export type CollectionSubscriptionRight = z.infer<
+    typeof CollectionSubscriptionRight
+>
+
+/** User preferences on a specific article */
+export const UserArticleStatus = z.object({
+    id: z.string(),
+    user_id: z.string(),
+    article_id: z.string(),
+    is_favorite: z.boolean(),
+    read_status: ReadStatus,
+    saved_at: z.string(),
+})
+export type UserArticleStatus = z.infer<typeof UserArticleStatus>
+
+/** Notifications to inform about invitation and user rights request to a specific collection */
+export const Notification = z.object({
+    id: z.string(),
+    sender_id: z.string(),
+    receiver_id: z.string(),
+    type: NotificationType,
+    status: NotificationStatus,
+})
+export type Notification = z.infer<typeof Notification>
+
+export const CollectionSubscription = z.object({
+    collection_id: z.string(),
+    right: CollectionSubscriptionRight,
+})
+export type CollectionSubscription = z.infer<typeof CollectionSubscription>
+
+/** User Schema */
+export const UserSchema = z.object({
+    id: z.string(),
+    username: z.string(),
+    password_hash: z.string(),
+    email: z.string(),
+    created_at: z.date(),
+    notifications: Notification.array(),
+    collectionsSubscriptions: CollectionSubscription.array(),
+    feedSubscriptions: FeedSchema.array(),
+    articles: UserArticleStatus.array(),
+})
+export type UserSchema = z.infer<typeof UserSchema>

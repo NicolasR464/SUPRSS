@@ -9,6 +9,7 @@ import {
 } from '@clerk/nextjs'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
+import { Drawer } from '@/components/drawer'
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -32,7 +33,7 @@ export default function RootLayout({
 }>) {
     return (
         <ClerkProvider>
-            <html lang="en">
+            <html suppressHydrationWarning lang="en">
                 <body
                     className={`${geistSans.variable} ${geistMono.variable} antialiased`}
                 >
@@ -49,6 +50,9 @@ export default function RootLayout({
                             <UserButton />
                         </SignedIn>
                     </header>
+
+                    <Drawer />
+
                     {children}
                 </body>
             </html>

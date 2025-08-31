@@ -1,7 +1,7 @@
-import { FeedItem } from '@/types/feed'
+import { FeedArticle } from '@/types/feed'
 import Link from 'next/link'
 
-export const Card = ({ feed }: { feed: FeedItem }) => {
+export const Card = ({ feed }: { feed: FeedArticle }) => {
     console.log(feed)
 
     return (

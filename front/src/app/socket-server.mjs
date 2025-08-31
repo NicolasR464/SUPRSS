@@ -15,12 +15,12 @@ io.on('connection', (socket) => {
     console.log('✅ user connected')
 
     // Send message to a room
-    socket.on('message', ({ room, text, timeStamp }) => {
-        if (!room || !text) return
+    socket.on('message', ({ room_id, text, created_at }) => {
+        if (!room_id || !text) return
 
-        console.log(`📩 [${room}] ${text}`)
+        console.log(`📩 [${room_id}] ${text}`)
 
-        io.to(room).emit('message', { room, text, timeStamp })
+        io.to(room_id).emit('message', { room_id, text, created_at })
     })
 
     socket.on('disconnect', () => {
