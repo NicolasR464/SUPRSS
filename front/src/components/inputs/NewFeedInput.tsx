@@ -14,12 +14,14 @@ export const NewFeedInput = () => {
             <legend className="fieldset-legend">RSS Feed</legend>
 
             <input
-                type="text"
-                className="input"
+                className="input validator"
+                type="url"
+                required
                 placeholder="Paste the RSS URL here."
                 value={url}
                 onChange={({ target }) => setUrl(target.value)}
             />
+            <div className="validator-hint">Enter valid RSS URL</div>
 
             <button
                 className="m-2 btn btn-soft btn-info rounded-box"

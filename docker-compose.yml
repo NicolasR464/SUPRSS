@@ -22,6 +22,7 @@ services:
         ports:
             - '${BACK_PORT}:3000'
         environment:
+            CLERK_SECRET_KEY: '${CLERK_SECRET_KEY}'
             NODE_ENV: development
             PORT: '3000'
             NEXT_TELEMETRY_DISABLED: '1'
@@ -49,12 +50,14 @@ services:
             - '${SOCKET_PORT}:3001'
         environment:
             CHOKIDAR_USEPOLLING: 'true'
-            NEXT_PUBLIC_URL_BACKEND: 'http://localhost:${BACK_PORT}'
-            NEXT_PUBLIC_URL_FRONT: 'http://localhost:${FRONT_PORT}'
-            NEXT_PUBLIC_URL_SOCKET: 'http://localhost:${SOCKET_PORT}'
+            CLERK_SECRET_KEY: '${CLERK_SECRET_KEY}'
+            NEXT_PUBLIC_URL_BACKEND: '${BACK_URL}'
+            NEXT_PUBLIC_URL_FRONT: '${FRONT_URL}'
+            NEXT_PUBLIC_URL_SOCKET: '${SOCKET_URL}'
             NEXT_TELEMETRY_DISABLED: '1'
             NODE_ENV: development
             PORT: '3000'
+            URL_BACKEND: '${BACK_URL}'
             WATCHPACK_POLLING: 'true'
         volumes:
             - ./front:/app

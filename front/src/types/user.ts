@@ -57,8 +57,8 @@ export type CollectionSubscription = z.infer<typeof CollectionSubscription>
 /** User Schema */
 export const UserSchema = z.object({
     id: z.string(),
-    username: z.string(),
-    password_hash: z.string(),
+    pseudo: z.string(),
+    avatar: z.url(),
     email: z.string(),
     created_at: z.date(),
     notifications: Notification.array(),
