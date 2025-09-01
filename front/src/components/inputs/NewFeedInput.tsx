@@ -1,12 +1,37 @@
 'use client'
 
-import { useState } from 'react'
+import { useFeedStore } from '@/store/feed'
+import { fetchRss } from '@/utils/apiCalls/rss'
+
+import { messages } from '@/utils/constants/messages'
+
+import { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 
 export const NewFeedInput = () => {
-    const [url, setUrl] = useState<string>('')
+    const [rssUrl, setRssUrl] = useState<string>('')
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const handleClick = () => {
-        console.log(url)
+    const setSelectedFeed = useFeedStore((state) => state.setSelectedFeed)
+    const selectedFeed = useFeedStore((state) => state.selectedFeed)
+
+    useEffect(() => {
+        if (selectedFeed?.feedUrl === rssUrl) {
+            setIsLoading(true)
+        }
+    }, [selectedFeed, rssUrl])
+
+    const handleClick = async () => {
+        const feedData = await fetchRss(rssUrl)
+        console.log('rssUrl', rssUrl)
+
+        if (!feedData) {
+            toast.error(messages.error.RSS)
+
+            return
+        }
+
+        setSelectedFeed(feedData)
     }
 
     return (
@@ -14,16 +39,17 @@ export const NewFeedInput = () => {
             <legend className="fieldset-legend">RSS Feed</legend>
 
             <input
-                className="input validator"
-                type="url"
+                className="input"
                 required
                 placeholder="Paste the RSS URL here."
-                value={url}
-                onChange={({ target }) => setUrl(target.value)}
+                value={rssUrl}
+                onChange={({ target }) => {
+                    setRssUrl(target.value.trim())
+                }}
             />
-            <div className="validator-hint">Enter valid RSS URL</div>
 
             <button
+                disabled={isLoading}
                 className="m-2 btn btn-soft btn-info rounded-box"
                 onClick={handleClick}
             >

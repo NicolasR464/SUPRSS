@@ -58,7 +58,7 @@ export const FeedType = z.enum([
 ])
 export type FeedType = z.infer<typeof FeedType>
 
-export const ChipColor = z.enum([
+export const DaisyColor = z.enum([
     'primary',
     'secondary',
     'accent',
@@ -67,4 +67,4 @@ export const ChipColor = z.enum([
     'warning',
     'error',
 ])
-export type ChipColor = z.infer<typeof ChipColor>
+export type DaisyColor = z.infer<typeof DaisyColor>

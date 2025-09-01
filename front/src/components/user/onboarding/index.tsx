@@ -3,7 +3,7 @@
 import { avatarPlaceholder } from '@/utils/constants/avatarPlaceholder'
 import { useUserStore } from '@/store/user'
 import { updateUser } from '@/utils/apiCalls/user'
-import { toastMessages } from '@/utils/constants/messages'
+import { messages } from '@/utils/constants/messages'
 import { getRandomAvatarUrl } from '@/utils/functions'
 import { useAuth } from '@clerk/nextjs'
 import Image from 'next/image'
@@ -38,7 +38,7 @@ export const UserOnboarding = () => {
         setUserData(userRes)
 
         // Toaster
-        toast.success(toastMessages.success.USER)
+        toast.success(messages.success.USER)
     }
 
     return (

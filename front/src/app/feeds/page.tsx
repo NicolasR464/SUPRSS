@@ -1,9 +1,7 @@
-import { Card } from '@/components/feed/Card'
-import { fetchRss } from '@/utils/rss'
+import { ArticleCard } from '@/components/article'
+import { fetchRss } from '@/utils/apiCalls/rss'
 
 const FEED_URL = 'https://www.lemonde.fr/rss/une.xml'
-
-export const revalidate = 900 // match the util
 
 export const Feeds = async ({}) => {
     const feedsData = await fetchRss(FEED_URL)
@@ -15,8 +13,8 @@ export const Feeds = async ({}) => {
             <h1 className="text-2xl font-semibold">Latest Headlines</h1>
             <ul className="space-y-3">
                 {feedsData &&
-                    feedsData.items?.map((feed, index) => (
-                        <Card feed={feed} key={index} />
+                    feedsData.items?.map((article, index) => (
+                        <ArticleCard article={article} key={index} />
                     ))}
             </ul>
         </div>

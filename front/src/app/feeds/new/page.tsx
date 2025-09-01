@@ -1,7 +1,5 @@
-import { CollectionTagLabels } from '@/utils/constants/tags'
-import { Chip } from '@/components/chip'
-import { CollectionTag } from '@/types/tags'
-import { NewFeedInput } from '@/components/inputs/NewFeedInput'
+import { NewFeedImporter } from '@/components/feed/NewFeedImporter'
+
 import { FaRss } from 'react-icons/fa'
 
 const NewFeed = () => {
@@ -11,13 +9,7 @@ const NewFeed = () => {
                 <FaRss /> <span className="ml-2">New Feed</span>
             </h1>
 
-            <NewFeedInput />
-
-            <div>
-                {CollectionTag.options.map((tag) => (
-                    <Chip key={tag} label={CollectionTagLabels[tag]} />
-                ))}
-            </div>
+            <NewFeedImporter />
         </div>
     )
 }

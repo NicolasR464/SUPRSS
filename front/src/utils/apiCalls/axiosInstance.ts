@@ -22,3 +22,13 @@ export const backEndInstance = createInstance(
         ? process.env.URL_BACKEND!
         : process.env.NEXT_PUBLIC_URL_BACKEND!
 )
+
+/**
+ * Creates an Axios instance for front-end API requests.
+ * @returns {AxiosInstance} - The created Axios instance.
+ */
+export const frontEndInstance = createInstance(
+    typeof window === 'undefined'
+        ? process.env.URL_FRONT!
+        : process.env.NEXT_PUBLIC_URL_FRONT!
+)
