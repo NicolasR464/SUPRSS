@@ -1,5 +1,5 @@
 import z from 'zod'
-import { FeedSchema } from './feed'
+import { FeedSchema } from '@/types/feed'
 
 export const ReadStatus = z.enum(['READ', 'NOT_READ'])
 export type ReadStatus = z.infer<typeof ReadStatus>

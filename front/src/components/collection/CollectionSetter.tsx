@@ -36,7 +36,10 @@ export const CollectionSetter = () => {
 
     useEffect(() => {
         if (user?.collectionsSubscriptions) {
-            const collections = user.collectionsSubscriptions.map((c) => c.name)
+            const collections = user.collectionsSubscriptions.map(
+                (collection) => collection.name
+            )
+
             setUserCollections(collections)
         }
     }, [user])
@@ -65,7 +68,14 @@ export const CollectionSetter = () => {
             return
         }
 
+        const collectionFound =
+            user &&
+            user?.collectionsSubscriptions?.find(
+                (collection) => collection.name === collectionSelectorValue
+            )
+
         const collection = {
+            ...(collectionFound && { id: collectionFound.collection_id }),
             name: collectionSelectorValue || newCollectionName,
             ...(tagsSelected.length > 0 && { tags: tagsSelected }),
         }
@@ -122,10 +132,9 @@ export const CollectionSetter = () => {
                                 <select
                                     className="select"
                                     value={collectionSelectorValue}
-                                    onChange={(e) => {
-                                        setCollectionSelectorValue(
-                                            e.target.value
-                                        )
+                                    onChange={({ target }) => {
+                                        setCollectionSelectorValue(target.value)
+
                                         setNewCollectionName('')
                                     }}
                                 >

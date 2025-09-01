@@ -3,4 +3,5 @@ export const errors = {
     INVALID_TOKEN: 'Invalid token',
     UNAUTHORIZED: 'Unauthorized',
     SERVER_ERROR: 'Server error',
+    FEED_ERROR: 'Feed CRUD error',
 }

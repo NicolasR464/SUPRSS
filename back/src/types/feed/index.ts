@@ -1,8 +1,7 @@
 import z from 'zod'
-import { ChatRoomSchema } from './chat'
-import { CollectionSchema } from './collection'
-import { FeedType } from './tags'
-import { link } from 'fs'
+import { ChatRoomSchema } from '@/types/chat'
+import { FeedType } from '@/types/tags'
+import { ObjectId } from 'mongodb'
 
 export const MediaDescription = z.object({
     _: z.string().optional(),
@@ -93,8 +92,8 @@ export const FeedSchema = RssFeed.omit({
     items: true,
     paginationLinks: true,
 }).extend({
-    id: z.string(),
-    status: FeedStatus,
-    type: FeedType,
+    id: z.instanceof(ObjectId),
+    status: FeedStatus.default(FeedStatus.enum.ACTIVE),
+    type: FeedType.optional(),
 })
 export type FeedSchema = z.infer<typeof FeedSchema>

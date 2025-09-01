@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 
-import { UserSchema } from '@/types/user'
 import { db } from '@/utils/mongo'
 
 import { collections } from '@/variables/collections'
 import { errors } from '@/variables/messages'
 import { verifyToken } from '@clerk/nextjs/server'
+import { UserSchema } from '@/types/user'
 
 export const GET = async (req: Request) => {
     const authHeader = req.headers.get('authorization')
@@ -52,7 +52,7 @@ export const GET = async (req: Request) => {
         { upsert: true, returnDocument: 'after' }
     )
 
-    // Response
+    // Return Response
     if (!userUpdated) {
         return new Response(JSON.stringify({ error: errors.SERVER_ERROR }), {
             status: 500,
@@ -98,8 +98,6 @@ export const PUT = async (req: Request) => {
 
     const userData: Partial<UserSchema> = await req.json()
 
-    console.log('🔥 userData: ', userData)
-
     const database = await db()
 
     const usersCollection = database.collection<UserSchema>(collections.USERS)
@@ -114,7 +112,7 @@ export const PUT = async (req: Request) => {
         { returnDocument: 'after' }
     )
 
-    // Response
+    // Return Response
     if (!result) {
         return NextResponse.json(
             { error: errors.SERVER_ERROR },
