@@ -1,19 +1,44 @@
 'user client'
 
-import { avatarPlaceholder } from '@/constants/avatarPlaceholder'
+import { avatarPlaceholder } from '@/utils/constants/avatarPlaceholder'
+import { useUserStore } from '@/store/user'
+import { updateUser } from '@/utils/apiCalls/user'
+import { toastMessages } from '@/utils/constants/messages'
 import { getRandomAvatarUrl } from '@/utils/functions'
+import { useAuth } from '@clerk/nextjs'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import toast from 'react-hot-toast'
 
 export const UserOnboarding = () => {
-    const [avatarUrl, setAvatarUrl] = useState('')
+    const { getToken } = useAuth()
 
-    useEffect(() => {
-        console.log(avatarUrl)
-    }, [avatarUrl])
+    const setUserData = useUserStore((state) => state.setUserData)
+
+    const [avatar, setAvatar] = useState('')
+    const [pseudo, setPseudo] = useState('')
+    const [isSending, setIsSending] = useState(false)
 
     const handleSubmit = async () => {
-        console.log('handleSubmit')
+        setIsSending(true)
+
+        const JWT = await getToken()
+
+        const userData = {
+            pseudo,
+            avatar,
+        }
+
+        if (!JWT) return
+
+        const userRes = await updateUser(JWT, userData)
+
+        setIsSending(false)
+
+        setUserData(userRes)
+
+        // Toaster
+        toast.success(toastMessages.success.USER)
     }
 
     return (
@@ -26,9 +51,9 @@ export const UserOnboarding = () => {
                 {/** Avatar Image */}
                 <div className="avatar flex p-8 items-center">
                     <div className="w-24 rounded-full">
-                        {avatarUrl && (
+                        {avatar && (
                             <Image
-                                src={avatarUrl}
+                                src={avatar}
                                 alt="avatar"
                                 width={80}
                                 height={80}
@@ -37,7 +62,7 @@ export const UserOnboarding = () => {
                             />
                         )}
 
-                        {!avatarUrl && (
+                        {!avatar && (
                             <Image
                                 src={avatarPlaceholder}
                                 alt="Avatar"
@@ -50,7 +75,7 @@ export const UserOnboarding = () => {
 
                     <button
                         className="m-2 btn btn-soft btn-info rounded-box"
-                        onClick={() => setAvatarUrl(getRandomAvatarUrl())}
+                        onClick={() => setAvatar(getRandomAvatarUrl())}
                     >
                         Set your avatar
                     </button>
@@ -64,6 +89,8 @@ export const UserOnboarding = () => {
                         type="text"
                         className="input min-w-[200px]"
                         placeholder="Enter your pseudo name"
+                        value={pseudo}
+                        onChange={(e) => setPseudo(e.target.value)}
                     />
                     <p className="label"></p>
                 </fieldset>
@@ -71,6 +98,7 @@ export const UserOnboarding = () => {
                 <button
                     className="m-2 btn btn-soft btn-info rounded-box"
                     onClick={() => handleSubmit()}
+                    disabled={isSending}
                 >
                     Submit
                 </button>

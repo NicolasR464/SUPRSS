@@ -10,7 +10,7 @@ export const UserDashboard = () => {
     const { getToken } = useAuth()
 
     const initializeUser = useUserStore((state) => state.initializeUser)
-    const user = useUserStore((state) => state.user)
+    const userStore = useUserStore((state) => state.user)
 
     useEffect(() => {
         const getUserData = async () => {
@@ -19,8 +19,15 @@ export const UserDashboard = () => {
             if (JWT) await initializeUser(JWT)
         }
 
-        if (isSignedIn && !user.pseudo) getUserData()
-    }, [getToken, initializeUser, isSignedIn, user])
+        if (isSignedIn && !userStore.pseudo) getUserData()
+    }, [getToken, initializeUser, isSignedIn, userStore])
 
-    return <div>{isSignedIn && !user.pseudo && <UserOnboarding />}</div>
+    return (
+        <div>
+            {isSignedIn &&
+                (!userStore.pseudo || userStore.pseudo === 'Anonymous') && (
+                    <UserOnboarding />
+                )}
+        </div>
+    )
 }

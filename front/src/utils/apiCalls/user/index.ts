@@ -1,4 +1,4 @@
-import { apiEndpoints } from '@/constants/endpoints'
+import { apiEndpoints } from '@/utils/constants/endpoints'
 import { AxiosResponse } from 'axios'
 import { backEndInstance } from '../axiosInstance'
 import { addAuthHeader } from '../header'
@@ -16,11 +16,31 @@ export const getUserData = async (
     addAuthHeader(backEndInstance, JWT)
 
     // API call to get user
-    const response: AxiosResponse<{ user: UserSchema }> =
-        await backEndInstance.get(apiEndpoints.private.USER)
+    const response: AxiosResponse<UserSchema> = await backEndInstance.get(
+        apiEndpoints.private.USER
+    )
 
     if (response.status !== 200) {
         throw new Error('Failed to fetch users')
+    }
+
+    // Return user
+    return response.data
+}
+
+export const updateUser = async (
+    JWT: string,
+    userData: Partial<UserSchema>
+) => {
+    // Add the authorization header
+    addAuthHeader(backEndInstance, JWT)
+
+    // API call to update user
+    const response: AxiosResponse<{ user: UserSchema }> =
+        await backEndInstance.put(apiEndpoints.private.USER, userData)
+
+    if (response.status !== 200) {
+        throw new Error('Failed to update user')
     }
 
     // Return user

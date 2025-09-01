@@ -1,3 +1,4 @@
+import { avatarPlaceholder } from '@/utils/constants/avatarPlaceholder'
 import { UserSchema } from '@/types/user'
 import { getUserData } from '@/utils/apiCalls/user'
 import { create } from 'zustand'
@@ -19,7 +20,7 @@ type UserStore = {
  */
 export const useUserStore = create<UserStore>()(
     persist(
-        immer((set) => ({
+        immer((set, get) => ({
             user: {
                 pseudo: undefined,
                 avatar: undefined,
@@ -30,13 +31,35 @@ export const useUserStore = create<UserStore>()(
             initializeUser: async (JWT: string) => {
                 console.log('🔥 initializeUser')
 
-                const user = await getUserData(JWT)
+                const { setUserData } = get()
 
-                if (user) {
-                    set({ user })
+                const userResponse = await getUserData(JWT)
+
+                if (userResponse) {
+                    console.log({ userResponse })
+
+                    const data = {
+                        pseudo: userResponse.pseudo ?? 'Anonymous',
+                        avatar: userResponse.avatar ?? avatarPlaceholder,
+                        ...(userResponse.notifications && {
+                            notifications: userResponse.notifications,
+                        }),
+                        ...(userResponse.collectionsSubscriptions && {
+                            collectionsSubscriptions:
+                                userResponse.collectionsSubscriptions,
+                        }),
+                        ...(userResponse.feedSubscriptions && {
+                            feedSubscriptions: userResponse.feedSubscriptions,
+                        }),
+                        ...(userResponse.articles && {
+                            articles: userResponse.articles,
+                        }),
+                    }
+
+                    setUserData(data)
                 }
 
-                console.log(user)
+                console.log(userResponse)
             },
 
             resetUserData: (): void => {
@@ -50,8 +73,26 @@ export const useUserStore = create<UserStore>()(
             },
 
             setUserData: (userData: Partial<UserSchema>): void => {
+                const newUserdata = {
+                    pseudo: userData.pseudo ?? 'Anonymous',
+                    avatar: userData.avatar ?? avatarPlaceholder,
+                    ...(userData.notifications && {
+                        notifications: userData.notifications,
+                    }),
+                    ...(userData.collectionsSubscriptions && {
+                        collectionsSubscriptions:
+                            userData.collectionsSubscriptions,
+                    }),
+                    ...(userData.feedSubscriptions && {
+                        feedSubscriptions: userData.feedSubscriptions,
+                    }),
+                    ...(userData.articles && {
+                        articles: userData.articles,
+                    }),
+                }
+
                 set((state) => {
-                    state.user = { ...state.user, ...userData }
+                    state.user = { ...state.user, ...newUserdata }
                 })
             },
         })),

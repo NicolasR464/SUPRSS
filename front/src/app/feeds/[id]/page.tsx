@@ -6,10 +6,6 @@ import { useParams } from 'next/navigation'
 export const Feed = () => {
     const { id: room_id } = useParams<{ id: string }>()
 
-    console.log('In Feed')
-
-    console.log('room_id ', room_id)
-
     return (
         <div>
             <h1>Feed {room_id}</h1>

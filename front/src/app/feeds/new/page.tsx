@@ -1,4 +1,4 @@
-import { CollectionTagLabels } from '@/constants/tags'
+import { CollectionTagLabels } from '@/utils/constants/tags'
 import { Chip } from '@/components/chip'
 import { CollectionTag } from '@/types/tags'
 import { NewFeedInput } from '@/components/inputs/NewFeedInput'
