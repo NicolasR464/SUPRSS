@@ -21,7 +21,7 @@ export const getUserData = async (
     )
 
     if (response.status !== 200) {
-        throw new Error('Failed to fetch users')
+        return undefined
     }
 
     // Return user
@@ -40,7 +40,7 @@ export const updateUser = async (
         await backEndInstance.put(apiEndpoints.private.USER, userData)
 
     if (response.status !== 200) {
-        throw new Error('Failed to update user')
+        return undefined
     }
 
     // Return user

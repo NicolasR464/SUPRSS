@@ -2,6 +2,7 @@ import z from 'zod'
 import { ChatRoomSchema } from './chat'
 import { CollectionSchema } from './collection'
 import { FeedType } from './tags'
+import { link } from 'fs'
 
 export const MediaDescription = z.object({
     _: z.string().optional(),
@@ -53,10 +54,18 @@ export const PaginationLinks = z.object({
 })
 export type PaginationLinks = z.infer<typeof PaginationLinks>
 
+export const FeedImage = z.object({
+    link: z.string().optional(),
+    title: z.string().optional(),
+    url: z.string().optional(),
+})
+export type FeedImage = z.infer<typeof FeedImage>
+
 /** RSS Feeds data parsed by the RSS parser */
 export const RssFeed = z.object({
     items: z.array(FeedArticle).optional(),
     feedUrl: z.string().optional(),
+    image: FeedImage.optional(),
     paginationLinks: PaginationLinks.optional(),
     title: z.string().optional(),
     description: z.string().optional(),
@@ -84,8 +93,7 @@ export const FeedSchema = RssFeed.omit({
     items: true,
     paginationLinks: true,
 }).extend({
-    articles_ids: ArticleSchema.shape.id.array(),
-    collections_ids: CollectionSchema.shape.id.array(),
+    id: z.string(),
     status: FeedStatus,
     type: FeedType,
 })

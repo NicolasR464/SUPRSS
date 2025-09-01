@@ -11,25 +11,34 @@ import toast from 'react-hot-toast'
 export const NewFeedInput = () => {
     const [rssUrl, setRssUrl] = useState<string>('')
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [disabled, setDisabled] = useState<boolean>(false)
 
     const setSelectedFeed = useFeedStore((state) => state.setSelectedFeed)
     const selectedFeed = useFeedStore((state) => state.selectedFeed)
 
     useEffect(() => {
+        console.log('selectedFeed', selectedFeed)
+
         if (selectedFeed?.feedUrl === rssUrl) {
             setIsLoading(true)
         }
     }, [selectedFeed, rssUrl])
 
     const handleClick = async () => {
+        setIsLoading(true)
+        setDisabled(true)
+
         const feedData = await fetchRss(rssUrl)
         console.log('rssUrl', rssUrl)
 
         if (!feedData) {
             toast.error(messages.error.RSS)
+            setIsLoading(false)
 
             return
         }
+
+        setIsLoading(false)
 
         setSelectedFeed(feedData)
     }
@@ -44,16 +53,17 @@ export const NewFeedInput = () => {
                 placeholder="Paste the RSS URL here."
                 value={rssUrl}
                 onChange={({ target }) => {
+                    setDisabled(false)
                     setRssUrl(target.value.trim())
                 }}
             />
 
             <button
-                disabled={isLoading}
+                disabled={disabled}
                 className="m-2 btn btn-soft btn-info rounded-box"
                 onClick={handleClick}
             >
-                Add
+                {isLoading ? 'Loading' : 'Add'}
             </button>
         </fieldset>
     )

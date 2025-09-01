@@ -1,4 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
+'use client'
+
 import { RssFeed } from '@/types/feed'
+
 import Link from 'next/link'
 
 export const FeedCard = ({ feed }: { feed: RssFeed }) => {
@@ -6,7 +10,7 @@ export const FeedCard = ({ feed }: { feed: RssFeed }) => {
 
     return (
         <div className="rounded-xl p-4 shadow border max-w-lg m-6">
-            <div>
+            <div className="relative">
                 {/** Title */}
                 <Link
                     href={feed.link ?? '#'}
@@ -15,6 +19,14 @@ export const FeedCard = ({ feed }: { feed: RssFeed }) => {
                 >
                     {feed.title}
                 </Link>
+
+                {feed?.image?.url && (
+                    <img
+                        src={feed.image.url}
+                        alt={feed.image.title ?? 'image'}
+                        className="absolute top-1 right-1 w-12 h-12 rounded-md object-cover"
+                    />
+                )}
 
                 {/** Date published */}
                 <div className="text-sm opacity-70">

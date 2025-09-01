@@ -29,8 +29,6 @@ export type CollectionSubscriptionRight = z.infer<
 
 /** User preferences on a specific article */
 export const UserArticleStatus = z.object({
-    id: z.string(),
-    user_id: z.string(),
     article_id: z.string(),
     is_favorite: z.boolean(),
     read_status: ReadStatus,
@@ -50,6 +48,7 @@ export type Notification = z.infer<typeof Notification>
 
 export const CollectionSubscription = z.object({
     collection_id: z.string(),
+    name: z.string(),
     right: CollectionSubscriptionRight,
 })
 export type CollectionSubscription = z.infer<typeof CollectionSubscription>
@@ -63,7 +62,7 @@ export const UserSchema = z.object({
     avatar: z.url(),
     notifications: Notification.array(),
     collectionsSubscriptions: CollectionSubscription.array(),
-    feedSubscriptions: FeedSchema.array(),
+    feedSubscriptions: FeedSchema.shape.id.array(),
     articles: UserArticleStatus.array(),
 })
 export type UserSchema = z.infer<typeof UserSchema>
