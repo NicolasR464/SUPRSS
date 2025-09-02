@@ -75,15 +75,6 @@ export const RssFeed = z.object({
 })
 export type RssFeed = z.infer<typeof RssFeed>
 
-/** Article Schema */
-export const ArticleSchema = FeedArticle.extend({
-    id: z.string(),
-    chatRoom_id: ChatRoomSchema.shape.id,
-    /** User who imported the feed */
-    user_id: z.string(),
-})
-export type ArticleSchema = z.infer<typeof ArticleSchema>
-
 export const FeedStatus = z.enum(['ACTIVE', 'INACTIVE'])
 export type FeedStatus = z.infer<typeof FeedStatus>
 
@@ -97,3 +88,13 @@ export const FeedSchema = RssFeed.omit({
     type: FeedType.optional(),
 })
 export type FeedSchema = z.infer<typeof FeedSchema>
+
+/** Article Schema */
+export const ArticleSchema = FeedArticle.extend({
+    id: z.string(),
+    feed_id: FeedSchema.shape.id,
+    chatRoom_id: ChatRoomSchema.shape.id,
+    /** User who imported the feed */
+    user_id: z.string(),
+})
+export type ArticleSchema = z.infer<typeof ArticleSchema>

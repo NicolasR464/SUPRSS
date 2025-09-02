@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { db } from '@/utils/mongo'
 
 import { collections } from '@/variables/collections'
-import { errors } from '@/variables/messages'
+import { backErrors } from '@/variables/messages'
 import { verifyToken } from '@clerk/nextjs/server'
 import { UserSchema } from '@/types/user'
 
@@ -14,7 +14,7 @@ export const GET = async (req: Request) => {
     // Check Token
     if (!token) {
         return NextResponse.json(
-            { error: errors.MISSING_TOKEN },
+            { error: backErrors.MISSING_TOKEN },
             {
                 status: 401,
             }
@@ -28,7 +28,7 @@ export const GET = async (req: Request) => {
 
     if (!payload.sub) {
         return NextResponse.json(
-            { error: errors.INVALID_TOKEN },
+            { error: backErrors.INVALID_TOKEN },
             {
                 status: 403,
             }
@@ -54,9 +54,12 @@ export const GET = async (req: Request) => {
 
     // Return Response
     if (!userUpdated) {
-        return new Response(JSON.stringify({ error: errors.SERVER_ERROR }), {
-            status: 500,
-        })
+        return new Response(
+            JSON.stringify({ error: backErrors.SERVER_ERROR }),
+            {
+                status: 500,
+            }
+        )
     }
 
     return NextResponse.json(userUpdated, {
@@ -72,7 +75,7 @@ export const PUT = async (req: Request) => {
     // Check Token
     if (!token) {
         return NextResponse.json(
-            { error: errors.MISSING_TOKEN },
+            { error: backErrors.MISSING_TOKEN },
             {
                 status: 401,
             }
@@ -86,7 +89,7 @@ export const PUT = async (req: Request) => {
 
     if (!payload.sub) {
         return NextResponse.json(
-            { error: errors.INVALID_TOKEN },
+            { error: backErrors.INVALID_TOKEN },
             {
                 status: 403,
             }
@@ -115,7 +118,7 @@ export const PUT = async (req: Request) => {
     // Return Response
     if (!result) {
         return NextResponse.json(
-            { error: errors.SERVER_ERROR },
+            { error: backErrors.SERVER_ERROR },
             {
                 status: 500,
             }

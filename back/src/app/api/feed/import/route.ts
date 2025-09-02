@@ -1,4 +1,4 @@
-import { errors } from '@/variables/messages'
+import { backErrors } from '@/variables/messages'
 import { NextResponse } from 'next/server'
 import { verifyToken } from '@clerk/nextjs/server'
 
@@ -13,7 +13,7 @@ import {
     FeedUpdateInterval,
 } from '@/types/collection'
 import z from 'zod'
-import { FeedSchema, FeedStatus } from '@/types/feed'
+import { ArticleSchema, FeedSchema, FeedStatus } from '@/types/feed'
 
 export const POST = async (req: Request) => {
     console.log('POST /api/feed/import')
@@ -28,7 +28,7 @@ export const POST = async (req: Request) => {
     // Check Token
     if (!token) {
         return NextResponse.json(
-            { error: errors.MISSING_TOKEN },
+            { error: backErrors.MISSING_TOKEN },
             {
                 status: 401,
             }
@@ -42,7 +42,7 @@ export const POST = async (req: Request) => {
 
     if (!payload.sub) {
         return NextResponse.json(
-            { error: errors.INVALID_TOKEN },
+            { error: backErrors.INVALID_TOKEN },
             {
                 status: 403,
             }
@@ -51,17 +51,21 @@ export const POST = async (req: Request) => {
 
     // CRUD to DBs
     const database = await db()
-    const usersCollection = database.collection<UserSchema>(collections.USERS)
-
     const clerk_user_id = payload.sub
 
-    // Import the feed (or get the feed id if already exists)
-
     const feedCollection = database.collection<FeedSchema>(collections.FEEDS)
+    const collectionCollection = database.collection<CollectionSchema>(
+        collections.COLLECTIONS
+    )
+    const articleCollection = database.collection<ArticleSchema>(
+        collections.ARTICLES
+    )
+    const usersCollection = database.collection<UserSchema>(collections.USERS)
 
+    // Create the feed (or get the feed date if already exists in DB)
     const dataFeed = data.feed
 
-    const feed = await feedCollection.findOneAndUpdate(
+    const feedCrud = await feedCollection.findOneAndUpdate(
         { feedUrl: data.feed.feedUrl }, // lookup
         {
             $setOnInsert: {
@@ -92,11 +96,11 @@ export const POST = async (req: Request) => {
         { upsert: true, returnDocument: 'after' }
     )
 
-    console.log({ feed })
+    console.log({ feed: feedCrud })
 
-    if (!feed) {
+    if (!feedCrud) {
         return NextResponse.json(
-            { error: errors.FEED_ERROR },
+            { error: backErrors.FEED_ERROR },
             {
                 status: 500,
             }
@@ -104,14 +108,24 @@ export const POST = async (req: Request) => {
     }
 
     /// CRUD to Collection (if collection in payload and the user set a new collection)
-    if (data.collection && !data.collection.id) {
-        // Create new collection
-        const collectionCollection = database.collection<CollectionSchema>(
-            collections.COLLECTIONS
-        )
+    if (data.collection && !data.collection._id) {
+        // Check if collection name is taken already
+        const collectionFound = await collectionCollection.findOne({
+            name: data.collection.name,
+        })
 
+        if (collectionFound) {
+            return NextResponse.json(
+                { error: backErrors.COLLECTION_NAME_ALREADY_TAKEN },
+                {
+                    status: 400,
+                }
+            )
+        }
+
+        // Create new collection
         const feedSetting = {
-            feed_id: feed?._id,
+            feed_id: feedCrud?._id,
             update: FeedUpdateInterval.enum.EVERY_HOUR,
         }
 
@@ -126,20 +140,32 @@ export const POST = async (req: Request) => {
             }),
         }
 
-        const newCollection = await collectionCollection.insertOne(
+        const collectionCrud = await collectionCollection.insertOne(
             newCollectionData
         )
 
-        console.log({ newCollection })
+        if (!collectionCrud)
+            return NextResponse.json(
+                { error: backErrors.COLLECTION_ERROR },
+                {
+                    status: 500,
+                }
+            )
     }
 
-    /// Create new feed if not exists (check feedUrl exists in DB  already)
+    /// Add new articles (on conditions not found -> feedCrud.pubDate + feedCrud._id )
+    const articleFound = articleCollection.findOne({
+        feed_id: feedCrud._id,
+        pubDate: feedCrud.pubDate,
+    })
 
-    /// Add new articles (on conditions)
+    if (!articleFound) {
+        // We add the new articles
+    }
 
     /// Update user
 
-    // Response
+    // Response - Returns the updated user document
     return new Response('OK', {
         status: 200,
     })

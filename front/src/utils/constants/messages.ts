@@ -7,3 +7,13 @@ export const messages = {
         DEFAULT: 'An error occurred',
     },
 }
+
+/** Error messages returned by the backend */
+export const backErrors = {
+    MISSING_TOKEN: 'Missing token',
+    INVALID_TOKEN: 'Invalid token',
+    UNAUTHORIZED: 'Unauthorized',
+    SERVER_ERROR: 'Server error',
+    FEED_ERROR: 'Feed CRUD error',
+    COLLECTION_NAME_ALREADY_TAKEN: 'Collection name already taken',
+}
