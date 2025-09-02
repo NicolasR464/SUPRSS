@@ -1,7 +1,6 @@
 import z from 'zod'
-import { ChatRoomSchema } from '@/types/chat'
+
 import { FeedType } from '@/types/tags'
-import { ObjectId } from 'mongodb'
 
 export const MediaDescription = z.object({
     _: z.string().optional(),
@@ -62,7 +61,7 @@ export type FeedImage = z.infer<typeof FeedImage>
 
 /** RSS Feeds data parsed by the RSS parser */
 export const RssFeed = z.object({
-    items: z.array(FeedArticle).optional(),
+    items: z.array(FeedArticle),
     feedUrl: z.string().optional(),
     image: FeedImage.optional(),
     paginationLinks: PaginationLinks.optional(),
@@ -83,18 +82,8 @@ export const FeedSchema = RssFeed.omit({
     items: true,
     paginationLinks: true,
 }).extend({
-    id: z.instanceof(ObjectId),
+    _id: z.string(),
     status: FeedStatus.default(FeedStatus.enum.ACTIVE),
     type: FeedType.optional(),
 })
 export type FeedSchema = z.infer<typeof FeedSchema>
-
-/** Article Schema */
-export const ArticleSchema = FeedArticle.extend({
-    id: z.string(),
-    feed_id: FeedSchema.shape.id,
-    chatRoom_id: ChatRoomSchema.shape.id,
-    /** User who imported the feed */
-    user_id: z.string(),
-})
-export type ArticleSchema = z.infer<typeof ArticleSchema>

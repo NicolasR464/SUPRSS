@@ -1,6 +1,6 @@
 import z from 'zod'
 import { CollectionTag } from '@/types/tags'
-import { ObjectId } from 'mongodb'
+import { FeedSchema } from '@/types/feed'
 
 export const FeedUpdateInterval = z.enum([
     'EVERY_HOUR',
@@ -10,14 +10,14 @@ export const FeedUpdateInterval = z.enum([
 export type FeedUpdateInterval = z.infer<typeof FeedUpdateInterval>
 
 export const FeedSetting = z.object({
-    feed_id: z.instanceof(ObjectId),
+    feed_id: FeedSchema.shape._id,
     update: FeedUpdateInterval.default(FeedUpdateInterval.enum.EVERY_HOUR),
 })
 export type FeedSetting = z.infer<typeof FeedSetting>
 
 /** Collection Schema */
 export const CollectionSchema = z.object({
-    _id: z.instanceof(ObjectId).optional(),
+    _id: z.string(),
     name: z.string(),
     description: z.string().optional(),
     tags: CollectionTag.array().optional(),

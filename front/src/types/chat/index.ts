@@ -1,24 +1,20 @@
 import z from 'zod'
+import { UserSchema } from '../user'
+import { ArticleSchema } from '../article'
 
-export const InstantChat = z.object({
-    id: z.string(),
-    user_id: z.string(),
+/** Instant Chat Schema */
+export const InstantChatSchema = z.object({
+    _id: z.string(),
+    user_id: UserSchema.shape.clerk_user_id,
+    userPseudo: UserSchema.shape.pseudo,
     text: z.string().max(5000),
     created_at: z.date(),
 })
-export type InstantChat = z.infer<typeof InstantChat>
+export type InstantChatSchema = z.infer<typeof InstantChatSchema>
 
-/** ChatRoom Schema */
-export const ChatRoomSchema = z.object({
-    id: z.string(),
-    article_id: z.string(),
+export const ChatRoom = z.object({
+    article_id: ArticleSchema.shape._id,
     collection_id: z.string(),
-    chats: InstantChat.array(),
+    chats: InstantChatSchema.array(),
 })
-export type ChatRoomSchema = z.infer<typeof ChatRoomSchema>
-
-/** Instant Chat payload to send to the back-end */
-export const InstantChatPayload = InstantChat.extend({
-    room_id: ChatRoomSchema.shape.id,
-})
-export type InstantChatPayload = z.infer<typeof InstantChatPayload>
+export type ChatRoom = z.infer<typeof ChatRoom>

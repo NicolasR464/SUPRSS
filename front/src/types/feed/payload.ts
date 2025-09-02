@@ -8,7 +8,7 @@ export const CollectionCreationPayload = CollectionSchema.omit({
     created_at: true,
     chatRoom_id: true,
     feedsSettings: true,
-})
+}).extend({ _id: CollectionSchema.shape._id.optional() })
 
 export const FeedImportPayload = z.object({
     feed: RssFeed,

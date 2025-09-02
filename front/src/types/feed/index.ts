@@ -1,5 +1,5 @@
 import z from 'zod'
-import { ChatRoomSchema } from '@/types/chat'
+
 import { FeedType } from '@/types/tags'
 
 export const MediaDescription = z.object({
@@ -61,7 +61,7 @@ export type FeedImage = z.infer<typeof FeedImage>
 
 /** RSS Feeds data parsed by the RSS parser */
 export const RssFeed = z.object({
-    items: z.array(FeedArticle).optional(),
+    items: z.array(FeedArticle),
     feedUrl: z.string().optional(),
     image: FeedImage.optional(),
     paginationLinks: PaginationLinks.optional(),
@@ -74,15 +74,6 @@ export const RssFeed = z.object({
 })
 export type RssFeed = z.infer<typeof RssFeed>
 
-/** Article Schema */
-export const ArticleSchema = FeedArticle.extend({
-    id: z.string(),
-    chatRoom_id: ChatRoomSchema.shape.id,
-    /** User who imported the feed */
-    user_id: z.string(),
-})
-export type ArticleSchema = z.infer<typeof ArticleSchema>
-
 export const FeedStatus = z.enum(['ACTIVE', 'INACTIVE'])
 export type FeedStatus = z.infer<typeof FeedStatus>
 
@@ -91,7 +82,7 @@ export const FeedSchema = RssFeed.omit({
     items: true,
     paginationLinks: true,
 }).extend({
-    id: z.string(),
+    _id: z.string(),
     status: FeedStatus.default(FeedStatus.enum.ACTIVE),
     type: FeedType.optional(),
 })

@@ -21,6 +21,8 @@ export const importFeed = async (payload: FeedImportPayload, JWT: string) => {
         payloadParsed.data
     )
 
+    console.log({ response })
+
     // Return
     return response.status
 }
