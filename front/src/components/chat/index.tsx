@@ -1,18 +1,18 @@
 'use client'
 
-import { InstantMessage } from '@/types/message'
+import { InstantChatPayload } from '@/types/chat'
 import { timeAgo } from '@/utils/time'
 import { useEffect, useRef, useState } from 'react'
 import { io, type Socket } from 'socket.io-client'
 
-export default function Chat({ roomId }: { roomId: string }) {
-    const [messages, setMessages] = useState<InstantMessage[]>([])
+export default function Chat({ room_id }: { room_id: string }) {
+    const [messages, setMessages] = useState<InstantChatPayload[]>([])
     const [message, setMessage] = useState('')
     const socketRef = useRef<Socket | null>(null)
 
     console.log('In Chat')
 
-    console.log('roomId ', roomId)
+    console.log('room_id ', room_id)
 
     useEffect(() => {
         const socket = io(`${process.env.NEXT_PUBLIC_URL_SOCKET}`, {
@@ -21,8 +21,10 @@ export default function Chat({ roomId }: { roomId: string }) {
 
         socketRef.current = socket
 
-        socket.on('message', (message: InstantMessage) => {
-            if (message.roomId === roomId) {
+        socket.on('message', (message: InstantChatPayload) => {
+            console.log('message ', message)
+
+            if (message.room_id === room_id) {
                 setMessages((prev) => [...prev, message])
             }
         })
@@ -34,13 +36,13 @@ export default function Chat({ roomId }: { roomId: string }) {
         return () => {
             socketRef.current?.disconnect()
         }
-    }, [roomId])
+    }, [room_id])
 
     const sendMessage = () => {
         socketRef.current?.emit('message', {
-            roomId,
+            room_id,
             text: message.trim(),
-            timeStamp: Date.now(),
+            created_at: Date.now(),
         })
 
         setMessage('')
@@ -67,23 +69,30 @@ export default function Chat({ roomId }: { roomId: string }) {
                             No messages yet. Be the first to say hi 👋
                         </p>
                     ) : (
-                        messages.map((message: InstantMessage, i: number) => (
-                            <div key={i} className="flex items-center gap-3">
-                                {/* Avatar */}
-                                <div className="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-full bg-zinc-100 font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-                                    U
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                    <div className="rounded-2xl bg-zinc-100 px-3.5 py-2 text-sm leading-relaxed text-zinc-800 shadow-sm dark:bg-zinc-800 dark:text-zinc-100">
-                                        {message.text}
+                        messages.map(
+                            (message: InstantChatPayload, i: number) => (
+                                <div
+                                    key={i}
+                                    className="flex items-center gap-3"
+                                >
+                                    {/* Avatar */}
+                                    <div className="flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-full bg-zinc-100 font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                                        U
                                     </div>
-                                    <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                                        {timeAgo(message.timeStamp)}
-                                    </span>
+
+                                    <div className="flex items-center gap-2">
+                                        <div className="rounded-2xl bg-zinc-100 px-3.5 py-2 text-sm leading-relaxed text-zinc-800 shadow-sm dark:bg-zinc-800 dark:text-zinc-100">
+                                            {message.text}
+                                        </div>
+                                        <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                                            {timeAgo(
+                                                Number(message.created_at)
+                                            )}
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            )
+                        )
                     )}
                 </div>
 

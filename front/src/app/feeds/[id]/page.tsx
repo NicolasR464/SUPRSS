@@ -4,17 +4,13 @@ import Chat from '@/components/chat'
 import { useParams } from 'next/navigation'
 
 export const Feed = () => {
-    const { id: roomId } = useParams<{ id: string }>()
-
-    console.log('In Feed')
-
-    console.log('roomId ', roomId)
+    const { id: room_id } = useParams<{ id: string }>()
 
     return (
         <div>
-            <h1>Feed {roomId}</h1>
+            <h1>Feed {room_id}</h1>
 
-            <Chat roomId={roomId} />
+            <Chat room_id={room_id} />
         </div>
     )
 }
