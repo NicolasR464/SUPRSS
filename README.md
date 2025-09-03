@@ -2,6 +2,8 @@
 
 A modern web application that allows users to aggregate RSS feeds and engage in real-time discussions about articles. Built with Next.js, TypeScript, Socket.IO, and MongoDB.
 
+[Github repository link](https://github.com/NicolasR464/SUPRSS.git)
+
 ## Features
 
 ### Core Functionality
