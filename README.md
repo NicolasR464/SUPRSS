@@ -50,36 +50,6 @@ A modern web application that allows users to aggregate RSS feeds and engage in 
 -   **Features**: Room-based messaging, connection management
 -   **Port**: 3001 (configurable)
 
-## 📁 Project Structure
-
-```
-4PROJ_2/
-├── front/                    # Frontend Next.js application
-│   ├── src/
-│   │   ├── app/             # App Router pages
-│   │   │   ├── feeds/       # Feed-related pages
-│   │   │   └── socket-server.mjs # Socket.IO server
-│   │   ├── components/      # React components
-│   │   │   ├── chat/        # Chat functionality
-│   │   │   ├── user/        # User management
-│   │   │   └── drawer/      # Navigation drawer
-│   │   ├── store/           # Zustand state management
-│   │   ├── types/           # TypeScript type definitions
-│   │   └── utils/           # Utility functions
-│   └── package.json
-├── back/                     # Backend API service
-│   ├── src/
-│   │   ├── app/api/         # API routes
-│   │   │   ├── user/        # User management endpoints
-│   │   │   └── feed/        # Feed management endpoints
-│   │   ├── types/           # Shared type definitions
-│   │   ├── utils/           # Database utilities
-│   │   └── variables/       # Constants and messages
-│   └── package.json
-├── docker-compose.yml        # Container orchestration
-└── Makefile                 # Development commands
-```
-
 ## Technology Stack
 
 ### Frontend Dependencies
@@ -125,7 +95,6 @@ A modern web application that allows users to aggregate RSS feeds and engage in 
 
 ```bash
 git clone <repository-url>
-cd 4PROJ_2
 ```
 
 2. **Create environment file**
@@ -288,7 +257,6 @@ Zustand handles:
 
 -   **JWT Authentication**: Secure API access with Clerk tokens
 -   **CORS Configuration**: Controlled cross-origin requests
--   **Input Validation**: Zod schema validation on all inputs
 -   **Environment Variables**: Sensitive data **protection**
 -   **Docker Isolation**: Containerized services
 
