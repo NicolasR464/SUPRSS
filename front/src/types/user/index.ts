@@ -57,11 +57,17 @@ export const UserSchema = z.object({
 })
 export type UserSchema = z.infer<typeof UserSchema>
 
+const UserCheck = z.object({
+    sender_id: UserSchema.shape.clerk_user_id,
+    receiver_id: UserSchema.shape.clerk_user_id,
+    read: z.boolean(),
+})
+
 /** Notifications to inform about invitation and user rights request to a specific collection */
 export const NotificationSchema = z.object({
     _id: z.string(),
-    sender_id: UserSchema.shape.clerk_user_id,
-    receiver_id: UserSchema.shape.clerk_user_id,
+    sender_id: UserCheck,
+    receiver_id: UserCheck,
     type: NotificationType,
     status: NotificationStatus,
 })

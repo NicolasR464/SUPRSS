@@ -41,9 +41,6 @@ export const useUserStore = create<UserStore>()(
                     const data = {
                         pseudo: userResponse.pseudo ?? 'Anonymous',
                         avatar: userResponse.avatar ?? avatarPlaceholder,
-                        ...(userResponse.notifications && {
-                            notifications: userResponse.notifications,
-                        }),
                         ...(userResponse.collectionsSubscriptions && {
                             collectionsSubscriptions:
                                 userResponse.collectionsSubscriptions,
@@ -76,9 +73,6 @@ export const useUserStore = create<UserStore>()(
                 const newUserdata = {
                     pseudo: userData.pseudo ?? 'Anonymous',
                     avatar: userData.avatar ?? avatarPlaceholder,
-                    ...(userData.notifications && {
-                        notifications: userData.notifications,
-                    }),
                     ...(userData.collectionsSubscriptions && {
                         collectionsSubscriptions:
                             userData.collectionsSubscriptions,

@@ -105,7 +105,7 @@ export const PUT = async (req: Request) => {
 
     const usersCollection = database.collection<UserSchema>(collections.USERS)
 
-    const result = await usersCollection.findOneAndUpdate(
+    const userUpdated = await usersCollection.findOneAndUpdate(
         { clerk_user_id },
         {
             $set: {
@@ -116,7 +116,7 @@ export const PUT = async (req: Request) => {
     )
 
     // Return Response
-    if (!result) {
+    if (!userUpdated) {
         return NextResponse.json(
             { error: backErrors.SERVER_ERROR },
             {
@@ -125,10 +125,7 @@ export const PUT = async (req: Request) => {
         )
     }
 
-    return NextResponse.json(
-        { user: result },
-        {
-            status: 200,
-        }
-    )
+    return NextResponse.json(userUpdated, {
+        status: 200,
+    })
 }

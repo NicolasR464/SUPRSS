@@ -10,10 +10,14 @@ export const messages = {
 
 /** Error messages returned by the backend */
 export const backErrors = {
-    MISSING_TOKEN: 'Missing token',
-    INVALID_TOKEN: 'Invalid token',
-    UNAUTHORIZED: 'Unauthorized',
-    SERVER_ERROR: 'Server error',
-    FEED_ERROR: 'Feed CRUD error',
+    ARTICLE_ERROR: 'Article CRUD error',
+    COLLECTION_ERROR: 'Collection CRUD error',
     COLLECTION_NAME_ALREADY_TAKEN: 'Collection name already taken',
+    DATABASE_CONNECTION_ERROR: 'Database connection error',
+    FEED_ERROR: 'Feed CRUD error',
+    INVALID_TOKEN: 'Invalid token',
+    MISSING_TOKEN: 'Missing token',
+    SERVER_ERROR: 'Server error',
+    UNAUTHORIZED: 'Unauthorized',
+    USER_ERROR: 'User CRUD error',
 }
