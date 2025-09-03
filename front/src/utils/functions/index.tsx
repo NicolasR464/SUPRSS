@@ -24,3 +24,8 @@ export const pickColor = (tag: CollectionTag): DaisyColor => {
     for (let i = 0; i < tag.length; i++) h = (h * 31 + tag.charCodeAt(i)) | 0
     return palette[Math.abs(h) % palette.length]
 }
+
+/** Replace :id in path with ID passed. */
+export const pathWithId = (path: string, id: number | string) => {
+    return path.replace(':id', id.toString())
+}

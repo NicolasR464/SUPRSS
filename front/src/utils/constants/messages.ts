@@ -5,6 +5,8 @@ export const messages = {
         USER: 'Error updating user',
         RSS: 'Error fetching RSS feed',
         DEFAULT: 'An error occurred',
+        MUST_SELECT_COLLECTION:
+            'Please select or create a collection to publish in',
     },
 }
 

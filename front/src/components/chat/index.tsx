@@ -1,12 +1,12 @@
 'use client'
 
-import { InstantChatPayload } from '@/types/chat'
+import { InstantChatSchema } from '@/types/chat'
 import { timeAgo } from '@/utils/time'
 import { useEffect, useRef, useState } from 'react'
 import { io, type Socket } from 'socket.io-client'
 
 export default function Chat({ room_id }: { room_id: string }) {
-    const [messages, setMessages] = useState<InstantChatPayload[]>([])
+    const [messages, setMessages] = useState<InstantChatSchema[]>([])
     const [message, setMessage] = useState('')
     const socketRef = useRef<Socket | null>(null)
 
@@ -21,7 +21,7 @@ export default function Chat({ room_id }: { room_id: string }) {
 
         socketRef.current = socket
 
-        socket.on('message', (message: InstantChatPayload) => {
+        socket.on('message', (message: InstantChatSchema) => {
             console.log('message ', message)
 
             if (message.room_id === room_id) {

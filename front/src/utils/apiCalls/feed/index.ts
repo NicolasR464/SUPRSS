@@ -8,9 +8,7 @@ import { FeedImportPayload } from '@/types/feed/payload'
 export const importFeed = async (payload: FeedImportPayload, JWT: string) => {
     const payloadParsed = FeedImportPayload.safeParse(payload)
 
-    if (!payloadParsed.success) {
-        return undefined
-    }
+    if (!payloadParsed.success) return undefined
 
     // Add the authorization header
     addAuthHeader(backEndInstance, JWT)
@@ -21,8 +19,6 @@ export const importFeed = async (payload: FeedImportPayload, JWT: string) => {
         payloadParsed.data
     )
 
-    console.log({ response })
-
     // Return
-    return response
+    return response.data
 }

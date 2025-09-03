@@ -11,6 +11,7 @@ export const UserDashboard = () => {
 
     const initializeUser = useUserStore((state) => state.initializeUser)
     const userStore = useUserStore((state) => state.user)
+    const hasHydrated = useUserStore((state) => state.hasHydrated)
 
     useEffect(() => {
         const getUserData = async () => {
@@ -25,6 +26,7 @@ export const UserDashboard = () => {
     return (
         <div>
             {isSignedIn &&
+                hasHydrated &&
                 (!userStore.pseudo || userStore.pseudo === 'Anonymous') && (
                     <UserOnboarding />
                 )}
