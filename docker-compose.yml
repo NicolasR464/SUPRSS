@@ -6,7 +6,7 @@ services:
         container_name: mongo
         restart: unless-stopped
         ports:
-            - '${MONGO_PORT}:27017'
+            - '${PORT_MONGO}:27017'
         environment:
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -20,7 +20,7 @@ services:
         working_dir: /app
         depends_on: [mongo]
         ports:
-            - '${BACK_PORT}:3000'
+            - '${PORT_BACK}:3000'
         environment:
             CLERK_SECRET_KEY: '${CLERK_SECRET_KEY}'
             NODE_ENV: development
@@ -29,6 +29,7 @@ services:
             MONGODB_URI: 'mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/${MONGO_DB}?authSource=admin'
             CHOKIDAR_USEPOLLING: 'true'
             WATCHPACK_POLLING: 'true'
+            URL_FRONT: '${URL_FRONT}'
         volumes:
             - ./back:/app
             - back-node-modules:/app/node_modules
@@ -46,19 +47,21 @@ services:
         working_dir: /app
         depends_on: [back]
         ports:
-            - '${FRONT_PORT}:3000'
-            - '${SOCKET_PORT}:3001'
+            - '${PORT_FRONT}:3000'
+            - '${PORT_SOCKET}:3001'
         environment:
             CHOKIDAR_USEPOLLING: 'true'
             CLERK_SECRET_KEY: '${CLERK_SECRET_KEY}'
             NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: '${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}'
-            NEXT_PUBLIC_URL_BACKEND: '${BACK_URL}'
-            NEXT_PUBLIC_URL_FRONT: '${FRONT_URL}'
-            NEXT_PUBLIC_URL_SOCKET: '${SOCKET_URL}'
+            NEXT_PUBLIC_URL_BACK: '${NEXT_PUBLIC_URL_BACK}'
+            NEXT_PUBLIC_URL_FRONT: '${NEXT_PUBLIC_URL_FRONT}'
+            NEXT_PUBLIC_URL_SOCKET: '${NEXT_PUBLIC_URL_SOCKET}'
             NEXT_TELEMETRY_DISABLED: '1'
             NODE_ENV: development
             PORT: '3000'
-            URL_BACKEND: '${BACK_URL}'
+            URL_BACK: '${URL_BACK}'
+            URL_FRONT: '${URL_FRONT}'
+            URL_SOCKET: '${URL_SOCKET}'
             WATCHPACK_POLLING: 'true'
         volumes:
             - ./front:/app
@@ -75,7 +78,7 @@ services:
         image: mongo-express:1
         depends_on: [mongo]
         ports:
-            - '${MONGO_EXPRESS_PORT}:8081'
+            - '${PORT_MONGO_EXPRESS}:8081'
         environment:
             ME_CONFIG_MONGODB_URL: 'mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/?authSource=admin'
             ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USERNAME}

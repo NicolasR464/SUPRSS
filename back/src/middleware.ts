@@ -34,6 +34,7 @@ export default clerkMiddleware((_auth, req) => {
         res.headers.set('Access-Control-Allow-Origin', origin)
         res.headers.set('Vary', 'Origin')
     }
+
     return res
 })
 

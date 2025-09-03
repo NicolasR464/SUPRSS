@@ -19,8 +19,8 @@ export const createInstance = (baseURL: string): AxiosInstance => {
  */
 export const backEndInstance = createInstance(
     typeof window === 'undefined'
-        ? process.env.URL_BACKEND!
-        : process.env.NEXT_PUBLIC_URL_BACKEND!
+        ? process.env.URL_BACK!
+        : process.env.NEXT_PUBLIC_URL_BACK!
 )
 
 /**

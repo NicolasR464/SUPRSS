@@ -12,6 +12,7 @@ import './globals.css'
 import { Drawer } from '@/components/drawer'
 
 import { Toaster } from 'react-hot-toast'
+import { ClearStoreOnLogout } from '@/components/auth'
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -42,22 +43,36 @@ const RootLayout = ({
                 <ClerkProvider>
                     <Toaster />
 
-                    <header className="flex justify-end items-center p-4 gap-4 h-16">
-                        <SignedOut>
-                            <SignInButton />
+                    <ClearStoreOnLogout />
 
-                            <SignUpButton>
-                                <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-                                    Sign Up
-                                </button>
-                            </SignUpButton>
-                        </SignedOut>
+                    <div className="navbar bg-base-100 shadow-sm">
+                        <header className="flex justify-end items-center p-4 gap-4 h-16">
+                            <SignedOut>
+                                <div className="flex w-[95vw] justify-between">
+                                    <button>
+                                        <a href="/">SUPRSS</a>
+                                    </button>
 
-                        <SignedIn>
-                            <UserButton />
-                        </SignedIn>
-                    </header>
-                    <Drawer />
+                                    <div>
+                                        <SignInButton />
+
+                                        <SignUpButton>
+                                            <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
+                                                Sign Up
+                                            </button>
+                                        </SignUpButton>
+                                    </div>
+                                </div>
+                            </SignedOut>
+
+                            <SignedIn>
+                                <div className="flex w-[95vw] justify-between">
+                                    <Drawer />
+                                    <UserButton />
+                                </div>
+                            </SignedIn>
+                        </header>
+                    </div>
 
                     {children}
                 </ClerkProvider>

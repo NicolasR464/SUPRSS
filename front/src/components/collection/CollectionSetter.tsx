@@ -11,15 +11,23 @@ import { importFeed } from '@/utils/apiCalls/feed'
 import { useAuth } from '@clerk/nextjs'
 import { backErrors, messages } from '@/utils/constants/messages'
 import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
+import { pathWithId } from '@/utils/functions'
+import { localRoutes } from '@/utils/constants/endpoints'
+import { CollectionSubscription } from '@/types/user'
 
 const DEFAULT_COLLECTION = ''
 const DEFAULT_PUBLISH_BUTTON_TEXT = 'Publish'
 
 export const CollectionSetter = () => {
     const { getToken } = useAuth()
+    const router = useRouter()
 
     const user = useUserStore((s) => s.user)
+    const setUserData = useUserStore((state) => state.setUserData)
+
     const selectedFeed = useFeedStore((state) => state.selectedFeed)
+    const setSelectedFeed = useFeedStore((state) => state.setSelectedFeed)
 
     const [publishInCollection, setPublishInCollection] = useState(false)
 
@@ -65,6 +73,17 @@ export const CollectionSetter = () => {
         console.log({ newCollectionName })
         console.log({ collectionSelectorValue })
 
+        // If collection option is checked but no collection name is set
+        if (
+            publishInCollection &&
+            !newCollectionName &&
+            !collectionSelectorValue
+        ) {
+            toast.error(messages.error.MUST_SELECT_COLLECTION)
+
+            return
+        }
+
         const JWT = await getToken()
 
         if (!JWT || !selectedFeed) {
@@ -78,7 +97,7 @@ export const CollectionSetter = () => {
             )
 
         const collection = {
-            ...(collectionFound && { id: collectionFound.collection_id }),
+            ...(collectionFound && { _id: collectionFound.collection_id }),
             name: collectionSelectorValue || newCollectionName,
             ...(tagsSelected.length > 0 && { tags: tagsSelected }),
         }
@@ -108,6 +127,7 @@ export const CollectionSetter = () => {
             }
 
             toast.error(messages.error.DEFAULT)
+            return
         }
 
         // Empty fields
@@ -116,6 +136,39 @@ export const CollectionSetter = () => {
         setNewCollectionName(DEFAULT_COLLECTION)
 
         setPublishButtonText(DEFAULT_PUBLISH_BUTTON_TEXT)
+
+        // Update user and feed store
+        setUserData(importFeedRes)
+
+        setSelectedFeed()
+
+        // Redirection
+
+        let newCollectionFound: CollectionSubscription
+
+        if (publishInCollection) {
+            newCollectionFound = importFeedRes.collectionsSubscriptions.find(
+                (collection: CollectionSubscription) =>
+                    collection.name === collectionSelectorValue ||
+                    collection.name === newCollectionName
+            )
+
+            if (newCollectionFound)
+                router.push(
+                    pathWithId(
+                        localRoutes.collection,
+                        newCollectionFound.collection_id
+                    )
+                )
+
+            return
+        }
+
+        if (user.feedSubscriptions?.length) {
+            const lastId = user.feedSubscriptions.at(-1)!
+
+            router.push(pathWithId(localRoutes.feed, lastId.toString()))
+        }
     }
 
     return (
@@ -129,11 +182,12 @@ export const CollectionSetter = () => {
                             ? 'Publish in a collection'
                             : 'Publish in no collection'}
                     </span>
+
                     <input
                         type="checkbox"
                         checked={publishInCollection}
-                        onChange={(e) => {
-                            setPublishInCollection(e.target.checked)
+                        onChange={({ target }) => {
+                            setPublishInCollection(target.checked)
 
                             setNewCollectionName(DEFAULT_COLLECTION)
 
@@ -165,9 +219,9 @@ export const CollectionSetter = () => {
                                     <option value="" disabled>
                                         Pick a collection
                                     </option>
-                                    {userCollections.map((c) => (
-                                        <option key={c} value={c}>
-                                            {c}
+                                    {userCollections.map((col) => (
+                                        <option key={col} value={col}>
+                                            {col}
                                         </option>
                                     ))}
                                 </select>

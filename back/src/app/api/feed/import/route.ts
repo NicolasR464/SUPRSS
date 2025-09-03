@@ -26,12 +26,7 @@ export const POST = async (req: Request) => {
 
     // Check Token
     if (!token) {
-        return NextResponse.json(
-            { error: backErrors.MISSING_TOKEN },
-            {
-                status: 401,
-            }
-        )
+        return NextResponse.json({ error: backErrors.MISSING_TOKEN })
     }
 
     // Verify Token
@@ -42,24 +37,16 @@ export const POST = async (req: Request) => {
     console.log({ payload })
 
     if (!payload.sub) {
-        return NextResponse.json(
-            { error: backErrors.INVALID_TOKEN },
-            {
-                status: 403,
-            }
-        )
+        return NextResponse.json({ error: backErrors.INVALID_TOKEN })
     }
 
     // CRUD to DBs
     const database = await db()
 
     if (!database) {
-        return NextResponse.json(
-            { error: backErrors.DATABASE_CONNECTION_ERROR },
-            {
-                status: 500,
-            }
-        )
+        return NextResponse.json({
+            error: backErrors.DATABASE_CONNECTION_ERROR,
+        })
     }
 
     const clerk_user_id = payload.sub
@@ -113,12 +100,7 @@ export const POST = async (req: Request) => {
     console.log({ feedCrud })
 
     if (!feedCrud) {
-        return NextResponse.json(
-            { error: backErrors.FEED_ERROR },
-            {
-                status: 500,
-            }
-        )
+        return NextResponse.json({ error: backErrors.FEED_ERROR })
     }
 
     /// CRUD to Collection (if collection in payload and the user set a new collection)
@@ -133,12 +115,9 @@ export const POST = async (req: Request) => {
             })
 
             if (collectionFound) {
-                return NextResponse.json(
-                    { error: backErrors.COLLECTION_NAME_ALREADY_TAKEN },
-                    {
-                        status: 400,
-                    }
-                )
+                return NextResponse.json({
+                    error: backErrors.COLLECTION_NAME_ALREADY_TAKEN,
+                })
             }
 
             // Create new collection
@@ -180,17 +159,13 @@ export const POST = async (req: Request) => {
                             ],
                         },
                     },
-                }
+                },
+                { returnDocument: 'after', upsert: true }
             )
         }
 
         if (!collectionCrud)
-            return NextResponse.json(
-                { error: backErrors.COLLECTION_ERROR },
-                {
-                    status: 500,
-                }
-            )
+            return NextResponse.json({ error: backErrors.COLLECTION_ERROR })
     }
 
     /// Add new articles (on conditions not found -> feedCrud.pubDate + feedCrud._id )
@@ -212,12 +187,7 @@ export const POST = async (req: Request) => {
         console.log({ articlesCrud })
 
         if (!articlesCrud)
-            return NextResponse.json(
-                { error: backErrors.ARTICLE_ERROR },
-                {
-                    status: 500,
-                }
-            )
+            return NextResponse.json({ error: backErrors.ARTICLE_ERROR })
     }
 
     /// Update user (update feedSubscription + collectionsSubscriptions)
@@ -242,12 +212,7 @@ export const POST = async (req: Request) => {
         console.log({ userFeedCrud })
 
         if (!userFeedCrud) {
-            return NextResponse.json(
-                { error: backErrors.USER_ERROR },
-                {
-                    status: 500,
-                }
-            )
+            return NextResponse.json({ error: backErrors.USER_ERROR })
         }
 
         userUpdated = userFeedCrud
@@ -273,16 +238,11 @@ export const POST = async (req: Request) => {
                     collectionsSubscriptions: newCollectionToAdd,
                 },
             },
-            { returnDocument: 'after' }
+            { returnDocument: 'after', upsert: true }
         )
 
         if (!userCollectionCrud) {
-            return NextResponse.json(
-                { error: backErrors.USER_ERROR },
-                {
-                    status: 500,
-                }
-            )
+            return NextResponse.json({ error: backErrors.USER_ERROR })
         }
 
         userUpdated = userCollectionCrud
