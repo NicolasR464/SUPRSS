@@ -31,18 +31,20 @@ export const getUserData = async (
 export const updateUser = async (
     JWT: string,
     userData: Partial<UserSchema>
-) => {
+): Promise<UserSchema | undefined> => {
     // Add the authorization header
     addAuthHeader(backEndInstance, JWT)
 
     // API call to update user
-    const response: AxiosResponse<{ user: UserSchema }> =
-        await backEndInstance.put(apiEndpoints.private.USER, userData)
+    const response: AxiosResponse<UserSchema> = await backEndInstance.put(
+        apiEndpoints.private.USER,
+        userData
+    )
 
     if (response.status !== 200) {
         return undefined
     }
 
     // Return user
-    return response.data.user
+    return response.data
 }

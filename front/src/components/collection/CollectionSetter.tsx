@@ -9,6 +9,8 @@ import { FeedImportPayload } from '@/types/feed/payload'
 import { useFeedStore } from '@/store/feed'
 import { importFeed } from '@/utils/apiCalls/feed'
 import { useAuth } from '@clerk/nextjs'
+import { backErrors, messages } from '@/utils/constants/messages'
+import toast from 'react-hot-toast'
 
 const DEFAULT_COLLECTION = ''
 const DEFAULT_PUBLISH_BUTTON_TEXT = 'Publish'
@@ -21,13 +23,14 @@ export const CollectionSetter = () => {
 
     const [publishInCollection, setPublishInCollection] = useState(false)
 
-    const [userCollections, setUserCollections] = useState<string[]>([
-        'hey',
-        'ho',
-    ])
-    const [newCollectionName, setNewCollectionName] = useState('')
+    const [userCollections, setUserCollections] = useState<string[]>([])
+
+    const [newCollectionName, setNewCollectionName] =
+        useState(DEFAULT_COLLECTION)
+
     const [collectionSelectorValue, setCollectionSelectorValue] =
         useState<string>(DEFAULT_COLLECTION)
+
     const [publishButtonText, setPublishButtonText] = useState(
         DEFAULT_PUBLISH_BUTTON_TEXT
     )
@@ -55,7 +58,7 @@ export const CollectionSetter = () => {
         }
     }, [newCollectionName, collectionSelectorValue])
 
-    /** Handle submit on clicking publish button */
+    /** Handle submit on publish button click */
     const handleSubmit = async () => {
         console.log('🔥 handleSubmit')
 
@@ -90,9 +93,29 @@ export const CollectionSetter = () => {
         console.log({ payload })
 
         // CALL
-        const importFeedResponse = await importFeed(payload, JWT)
+        const importFeedRes = await importFeed(payload, JWT)
 
-        console.log({ importFeedResponse })
+        console.log({ importFeedRes })
+
+        // Error handling
+        if (importFeedRes && 'error' in importFeedRes) {
+            if (
+                importFeedRes.error === backErrors.COLLECTION_NAME_ALREADY_TAKEN
+            ) {
+                toast.error(backErrors.COLLECTION_NAME_ALREADY_TAKEN)
+
+                return
+            }
+
+            toast.error(messages.error.DEFAULT)
+        }
+
+        // Empty fields
+        setCollectionSelectorValue(DEFAULT_COLLECTION)
+
+        setNewCollectionName(DEFAULT_COLLECTION)
+
+        setPublishButtonText(DEFAULT_PUBLISH_BUTTON_TEXT)
     }
 
     return (
@@ -112,7 +135,8 @@ export const CollectionSetter = () => {
                         onChange={(e) => {
                             setPublishInCollection(e.target.checked)
 
-                            setNewCollectionName('')
+                            setNewCollectionName(DEFAULT_COLLECTION)
+
                             setCollectionSelectorValue(DEFAULT_COLLECTION)
                         }}
                         className="toggle border-indigo-600 bg-indigo-500 checked:border-orange-500 checked:bg-orange-400 checked:text-orange-800"
@@ -135,7 +159,7 @@ export const CollectionSetter = () => {
                                     onChange={({ target }) => {
                                         setCollectionSelectorValue(target.value)
 
-                                        setNewCollectionName('')
+                                        setNewCollectionName(DEFAULT_COLLECTION)
                                     }}
                                 >
                                     <option value="" disabled>

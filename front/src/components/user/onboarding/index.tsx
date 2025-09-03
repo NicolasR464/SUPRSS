@@ -33,6 +33,12 @@ export const UserOnboarding = () => {
 
         const userRes = await updateUser(JWT, userData)
 
+        if (!userRes) {
+            toast.error(messages.error.USER)
+
+            return
+        }
+
         setIsSending(false)
 
         setUserData(userRes)
